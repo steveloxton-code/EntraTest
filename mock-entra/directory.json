@@ -163,6 +163,9 @@
       "requireConsent": false,
       "requireUserAssignment": false,
       "redirectUris": [
+        "http://localhost:5173/blank.html",
+        "http://localhost:4173/blank.html",
+        "https://plwmp/blank.html",
         "http://localhost:5173/",
         "http://localhost:4173/",
         "https://plwmp/"
