@@ -492,6 +492,15 @@ function createServer(options = {}) {
           throw new AadError(70011, `The scope(s) ${widened.join(', ')} were not granted to the original token.`);
         }
 
+        // Rotation: the old token was consumed by takeRefreshToken above, so a
+        // replacement must be issued whenever the ORIGINAL grant included
+        // offline_access — even when this request narrows scope to a single resource,
+        // as MSAL does on silent renewal. Without this the client is left holding a
+        // dead refresh token after exactly one renewal, and silent SSO stops working.
+        if (original.has('offline_access') && !requested.includes('offline_access')) {
+          requested.push('offline_access');
+        }
+
         const result = issueUserTokens({
           app, user,
           scope: requested.join(' '),

@@ -15,6 +15,66 @@
 
   "users": [
     {
+      "$comment": "ITIL app users. displayName matches the requester/assignee names already in the change database, so 'My Changes' and 'My Tasks' resolve. Roles are assigned against the ITIL API registration, which is what puts them in the access token's `roles` claim.",
+      "objectId": "00000000-0000-0000-0000-00000000c001",
+      "userPrincipalName": "steven.loxton@contoso.onmicrosoft.com",
+      "password": "Passw0rd!",
+      "displayName": "Steven Loxton",
+      "givenName": "Steven",
+      "surname": "Loxton",
+      "mail": "steven.loxton@ogi.wales",
+      "jobTitle": "Network Engineer",
+      "department": "Infrastructure",
+      "accountEnabled": true,
+      "requiresMfa": false,
+      "groups": [],
+      "appRoles": { "7a1b0c2d-3e4f-4a5b-8c6d-9e0f1a2b3c4d": ["Requester"] }
+    },
+    {
+      "objectId": "00000000-0000-0000-0000-00000000c002",
+      "userPrincipalName": "liam.mainwaring@contoso.onmicrosoft.com",
+      "password": "Passw0rd!",
+      "displayName": "Liam Mainwaring",
+      "givenName": "Liam",
+      "surname": "Mainwaring",
+      "mail": "liam.mainwaring@ogi.wales",
+      "jobTitle": "Change Manager",
+      "department": "Service Management",
+      "accountEnabled": true,
+      "requiresMfa": false,
+      "groups": [],
+      "appRoles": { "7a1b0c2d-3e4f-4a5b-8c6d-9e0f1a2b3c4d": ["ChangeManager"] }
+    },
+    {
+      "objectId": "00000000-0000-0000-0000-00000000c003",
+      "userPrincipalName": "jordan.faith@contoso.onmicrosoft.com",
+      "password": "Passw0rd!",
+      "displayName": "Jordan Faith",
+      "givenName": "Jordan",
+      "surname": "Faith",
+      "mail": "jordan.faith@ogi.wales",
+      "jobTitle": "CAB Approver",
+      "department": "Service Management",
+      "accountEnabled": true,
+      "requiresMfa": false,
+      "groups": [],
+      "appRoles": { "7a1b0c2d-3e4f-4a5b-8c6d-9e0f1a2b3c4d": ["CABApprover"] }
+    },
+    {
+      "$comment": "Signs in successfully but holds NO app role for the ITIL API — proves the API rejects an authenticated user with no entitlement, rather than defaulting them to a role.",
+      "objectId": "00000000-0000-0000-0000-00000000c004",
+      "userPrincipalName": "noroles@contoso.onmicrosoft.com",
+      "password": "Passw0rd!",
+      "displayName": "Nora Noroles",
+      "givenName": "Nora",
+      "surname": "Noroles",
+      "mail": "noroles@ogi.wales",
+      "accountEnabled": true,
+      "requiresMfa": false,
+      "groups": [],
+      "appRoles": {}
+    },
+    {
       "objectId": "00000000-0000-0000-0000-00000000a001",
       "userPrincipalName": "alice@contoso.onmicrosoft.com",
       "password": "Passw0rd!",
@@ -76,6 +136,47 @@
   ],
 
   "applications": [
+    {
+      "$comment": "ITIL Change Management API - the protected resource. Mirrors an Entra app registration that exposes a scope and defines app roles. Access tokens for this API carry aud = this appId and the caller's roles.",
+      "appId": "7a1b0c2d-3e4f-4a5b-8c6d-9e0f1a2b3c4d",
+      "displayName": "ITIL Change Management API",
+      "clientSecrets": [],
+      "isPublicClient": false,
+      "requirePkce": false,
+      "requireConsent": false,
+      "requireUserAssignment": false,
+      "redirectUris": [],
+      "postLogoutRedirectUris": [],
+      "identifierUri": "api://7a1b0c2d-3e4f-4a5b-8c6d-9e0f1a2b3c4d",
+      "exposedScopes": ["access_as_user"],
+      "appRoles": ["Requester", "ChangeManager", "CABApprover"],
+      "allowedGrants": ["authorization_code", "refresh_token", "password"],
+      "groupsClaim": false
+    },
+    {
+      "$comment": "ITIL Change Management SPA - public client (no secret in a browser), PKCE mandatory. Requests api://<api>/access_as_user to call the API.",
+      "appId": "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f",
+      "displayName": "ITIL Change Management SPA",
+      "clientSecrets": [],
+      "isPublicClient": true,
+      "requirePkce": true,
+      "requireConsent": false,
+      "requireUserAssignment": false,
+      "redirectUris": [
+        "http://localhost:5173/",
+        "http://localhost:4173/",
+        "https://plwmp/"
+      ],
+      "postLogoutRedirectUris": [
+        "http://localhost:5173/",
+        "http://localhost:4173/",
+        "https://plwmp/"
+      ],
+      "exposedScopes": [],
+      "appRoles": [],
+      "allowedGrants": ["authorization_code", "refresh_token", "password"],
+      "groupsClaim": false
+    },
     {
       "$comment": "Confidential client - the sample web app. Mirrors a 'Web' platform app registration.",
       "appId": "8f1e0b32-6a1e-4c1e-9a11-2b3c4d5e6f70",
