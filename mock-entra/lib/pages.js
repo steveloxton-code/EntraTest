@@ -75,7 +75,7 @@ function initials(name) {
 function loginPage({ tenant, app, users, requestParams, error, prefillUsername, showPasswordHints }) {
   const accounts = users
     .map(
-      (u) => `<li><button type="submit" name="username" value="${esc(u.userPrincipalName)}">
+      (u) => `<li><button type="button" data-username="${esc(u.userPrincipalName)}">
         <span class="avatar">${esc(initials(u.displayName))}</span>
         <span><strong>${esc(u.displayName)}</strong><br><span class="muted">${esc(u.userPrincipalName)}</span></span>
       </button></li>`,
@@ -97,7 +97,18 @@ function loginPage({ tenant, app, users, requestParams, error, prefillUsername, 
       <h2>Pick a test account</h2>
       <ul class="accounts">${accounts}</ul>
       ${showPasswordHints ? `<p class="muted">Passwords come from <code>directory.json</code>; the seeded accounts all use <code>Passw0rd!</code>. Choosing an account above still requires the password.</p>` : ''}
-    </form>`);
+    </form>
+    <script>
+      // Picking an account fills the username and moves to the password. These used to be
+      // submit buttons, but the required (empty) fields made the browser block the submit.
+      document.querySelectorAll('.accounts button[data-username]').forEach((b) => {
+        b.addEventListener('click', () => {
+          document.getElementById('username').value = b.dataset.username;
+          const pw = document.getElementById('password');
+          if (pw.value) b.form.requestSubmit(); else pw.focus();
+        });
+      });
+    </script>`);
 }
 
 function consentPage({ tenant, app, user, scopes, requestParams }) {
